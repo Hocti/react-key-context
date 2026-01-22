@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useMemo } from "react";
 import { KeyContextProvider, useKeyContext } from "react-key-context";
 
 // --- Consumers ---
@@ -49,7 +49,11 @@ const UserDisplay = () => {
 function App() {
 	const [globalCount, setGlobalCount] = useState(123);
 	const [localCount, setLocalCount] = useState(456);
-	const [showChild, setShowChild] = useState(true);
+	const [showChildOnShadow, setShowChildOnShadow] = useState(true);
+
+	const showGlobalCount = useMemo(() => {
+		return <CountDisplay label="Global Consumer" k="globalCount" />
+	}, []);
 
 	return (
 		<KeyContextProvider keyName="globalCount" value={globalCount}>
@@ -60,8 +64,8 @@ function App() {
 					<div className="section">
 						<h2>Global Scope</h2>
 						<button onClick={() => setGlobalCount((c) => c + 1)}>Increment Global ({globalCount})</button>
-						<CountDisplay label="Global Consumer" k="globalCount" />
 						<UserDisplay />
+						{!showChildOnShadow && showGlobalCount}
 					</div>
 
 					<div className="section">
@@ -74,7 +78,7 @@ function App() {
 								</button>
 
 								{/* Should read LOCAL value */}
-								<CountDisplay label="Shadowed Consumer" k="globalCount" />
+						{showChildOnShadow && showGlobalCount}
 
 								{/* Should still read GLOBAL user, traversing up */}
 								<UserDisplay />
@@ -85,12 +89,7 @@ function App() {
 
 				<div className="section">
 					<h2>Dynamic Tree Updates</h2>
-					<button onClick={() => setShowChild(!showChild)}>Toggle Child Mount</button>
-					{showChild && (
-						<KeyContextProvider keyName="dynamicKey" value={999}>
-							<CountDisplay label="Dynamic Child" k="dynamicKey" />
-						</KeyContextProvider>
-					)}
+					<button onClick={() => setShowChildOnShadow(!showChildOnShadow)}>Toggle Child Mount</button>
 				</div>
 			</KeyContextProvider>
 		</KeyContextProvider>
