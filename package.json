@@ -6,7 +6,10 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "package.json",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc && vite build",
